@@ -320,28 +320,60 @@ STJ.he <- summary(STJ)
 mean(STJ.he$Hobs)
 
 #### Generating and plotting a neighbor joining tree ####
-bbh_dist <- genet.dist(bbh_all_hier, method = 'Da')
+bbh_dist <- genet.dist(bbh_all_hier, method = 'Ds')
 
 temp <- as.data.frame(as.matrix(bbh_dist))
 table.paint(temp, cleg=0, clabel.row = 0.5, clabel.col = 0.5) #darker shades mean greater distances
 
 tree <- nj(bbh_dist) #unrooted
+tree$edge.length[27] <- abs(tree$edge.length[27]) # some branches are negative because of nj method, so options are to leave them, set them to zero, or take absolute value
+tree$edge.length[31] <- abs(tree$edge.length[31])
+tree$tip.label <- c('MAR', 'PET', 'EMA', 'LOC', 'OYS', 'EXE', 'PAR', 'MYS', 'HER', 'MON', 'GIL', 'MET', 'DEL', 'SUS', 'POT', 'CPF', 'SAN', 'SAV', 'LLA', 'LHA','LCT', 'LNO', 'LSE', 'LYO', 'LTU', 'LBU', 'LRA', 'STJ') # modify tip labels for easier plotting
+
 plot(tree, show.tip = FALSE, cex = 0.8)
 tiplabels(unique(bbh_all@pop), cex= 0.6, bg = 'white', frame = 'none', adj = -0.1)
 plot(tree,type='unrooted',show.tip=FALSE)
 title('Unrooted NJ tree')
 tiplabels(unique(bbh_all@pop), cex= 0.6, bg = 'white', frame = 'none')
 
-ggtree(tree, layout = 'circular')
+# tree.root <- root(tree, out = 1) #rooted, but what is the root?
+# plot(tree.root, show.tip = FALSE, cex = 0.8)
+# tiplabels(unique(bbh_all@pop), cex= 0.6, bg = 'white', frame = 'none', adj = -0.1)
 
+# Two trees
+# Cirlce tree
+png(file="~/Documents/UCSC_postdoc/blueback_herring/results/bbh_all_tree_circle.png", width=8, height=7, res=300, units="in")
 
+par(
+  mar=c(4, 3, 3, 1), # panel magin size in "line number" units
+  mgp=c(3, 1, 0), # default is c(3,1,0); line number for axis label, tick label, axis
+  tcl=-0.5, # size of tick marks as distance INTO figure (negative means pointing outward)
+  cex=1, # character expansion factor; keep as 1; if you have a many-panel figure, they start changing the default!
+  ps=14, # point size, which is the font size
+  bg=NA,
+  bty = 'n'
+)
 
+ggtree(tree, layout = 'circular', branch.length = 'none') + geom_treescale(x = 7, y =0) + geom_tiplab2(size = 4, hjust = -0.1, aes(angle=angle))
 
+dev.off()
 
+# Fan tree
+png(file="~/Documents/UCSC_postdoc/blueback_herring/results/bbh_all_tree_fan.png", width=8, height=7, res=300, units="in")
 
-tree.root <- root(tree, out = 1) #rooted, but what is the root?
-plot(tree.root, show.tip = FALSE, cex = 0.8)
-tiplabels(unique(bbh_all@pop), cex= 0.6, bg = 'white', frame = 'none', adj = -0.1)
+par(
+  mar=c(4, 3, 3, 1), # panel magin size in "line number" units
+  mgp=c(3, 1, 0), # default is c(3,1,0); line number for axis label, tick label, axis
+  tcl=-0.5, # size of tick marks as distance INTO figure (negative means pointing outward)
+  cex=1, # character expansion factor; keep as 1; if you have a many-panel figure, they start changing the default!
+  ps=14, # point size, which is the font size
+  bg=NA,
+  bty = 'n'
+)
+
+ggtree(tree, layout = 'daylight', branch.length = 'none') + geom_treescale(x=2,y=-25) + geom_tiplab2(size = 3, hjust = -0.1, aes(angle=angle)) + ggplot2::xlim(2,26) + ggplot2::ylim(-25,0)
+
+dev.off()
 
 #### Exploring how genetic diversity scales with dam age and size ####
 data <- read.table("~/Documents/UCSC_postdoc/blueback_herring/results/bbh_all_%poly.txt", header = TRUE)
