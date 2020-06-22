@@ -8,14 +8,13 @@ meta_land <- read.table("~/Documents/UCSC_postdoc/blueback_herring/data/landlock
 base_latlon <- read.delim("~/Documents/UCSC_postdoc/blueback_herring/maps/baseline_latlon.txt", header = TRUE)
 
 # Read in shapefiles with river and lake data
-riversData <- readOGR("~/Documents/UCSC_postdoc/blueback_herring/maps/ne_10m_rivers_lake_centerlines/ne_10m_rivers_lake_centerlines.shp") # load the shapefile
-riversData_fine <- readOGR("~/Documents/UCSC_postdoc/blueback_herring/maps/ne_10m_rivers_north_america/ne_10m_rivers_north_america.shp")
-lakesData <- readOGR("~/Documents/UCSC_postdoc/blueback_herring/maps/ne_10m_lakes/ne_10m_lakes.shp")
-lakesData_fine <- readOGR("~/Documents/UCSC_postdoc/blueback_herring/maps/ne_10m_lakes_north_america/ne_10m_lakes_north_america.shp")
-
-rs <- readOGR("~/Documents/UCSC_postdoc/blueback_herring/maps/Lakes%2C_Ponds%2C_Reservoirs%2C_and_Swamps_Georgia-shp/Lakes%2C_Ponds%2C_Reservoirs%2C_and_Swamps_Georgia.shp")
-
-
+H_0602Lakes <- readOGR("~/Documents/UCSC_postdoc/blueback_herring/maps/H_0602_lakes/H_0602_lakes.shp")
+H_0306Lakes <- readOGR("~/Documents/UCSC_postdoc/blueback_herring/maps/H_0306_lakes/H_0306_lakes.shp")
+H_0313Lakes <- readOGR("~/Documents/UCSC_postdoc/blueback_herring/maps/H_0313_lakes/H_0313_lakes.shp")
+H_0315Lakes <- readOGR("~/Documents/UCSC_postdoc/blueback_herring/maps/H_0315_lakes/H_0315.shp")
+H_0307Lakes <- readOGR("~/Documents/UCSC_postdoc/blueback_herring/maps/H_0307_lakes/H_0307.shp")
+H_0305Lakes <- readOGR("~/Documents/UCSC_postdoc/blueback_herring/maps/H_0305_lakes/H_0305.shp")
+H_0601Lakes <- readOGR("~/Documents/UCSC_postdoc/blueback_herring/maps/H_0601_lakes/H_0601.shp")
 
 # Find unique lat/long combos
 coors <- meta_land[!duplicated(meta_land[8:10]),]
@@ -77,8 +76,17 @@ text(-82.1, 30.1,"STJ", cex = 0.7)
 dev.off()
 
 #### Inset map ####
-map("worldHires", c("us"), xlim=c(-84.5,-82.5), ylim=c(34,35.1), col="gray90", fill=TRUE) #plots the region of the USA that I want
-map("stdate", xlim=c(-84.5,-82.5), ylim=c(34,35.1), add = TRUE, boundary=FALSE, col = 'black') # plots US state boundaries
+png(file="~/Documents/UCSC_postdoc/blueback_herring/maps/landlocked.png", width=7, height=5, res=300, units="in")
+
+par(
+  mar=c(5, 7, 4, 2), # panel margin size in "line number" units
+  mgp=c(3, 1, 0), # default is c(3,1,0); line number for axis label, tick label, axis
+  tcl=-0.5, # size of tick marks as distance INTO figure (negative means pointing outward)
+  cex=1, # character expansion factor; keep as 1; if you have a many-panel figure, they start changing the default!
+  ps=14 # point size, which is the font size
+)
+map("worldHires", c("us"), xlim=c(-84.5,-82.5), ylim=c(34,35.1), col="gray92", fill=TRUE) #plots the region of the USA that I want
+map("state", xlim=c(-84.5,-82.5), ylim=c(34,35.1), add = TRUE, boundary=FALSE, col = 'gray70') # plots US state boundaries
 title(xlab = "Longitude (°)", ylab = "Latitude (°)")
 
 axis(1, at=seq(-85,-82, by=1), labels=seq(-85,-82, by= 1))
@@ -86,13 +94,27 @@ axis(2, at=seq(33,36, by = 1), labels=seq(33,36, by= 1), las = TRUE)
 box()
 
 # Plot rivers and lakes
-plot(riversData, col='blue', add=T) # plot big rivers
-plot(riversData_fine, col='blue', add=T) # plot smaller rivers
-plot(lakesData, col='blue', add=T)
-plot(lakesData_fine, col='blue', add=T)
-
-plot(rs, col = 'blue', add=T)
+plot(H_0602Lakes[which(H_0602Lakes$SHAPE_Area > 0.00001),], col = 'skyblue2', add = T, border = 'skyblue2')
+plot(H_0306Lakes[which(H_0306Lakes$SHAPE_Area > 0.00001),], col = 'skyblue2', add = T, border = 'skyblue2')
+plot(H_0313Lakes[which(H_0313Lakes$SHAPE_Area > 0.00001),], col = 'skyblue2', add = T, border = 'skyblue2')
+plot(H_0315Lakes[which(H_0315Lakes$SHAPE_Area > 0.00001),], col = 'skyblue2', add = T, border = 'skyblue2')
+plot(H_0307Lakes[which(H_0307Lakes$SHAPE_Area > 0.00001),], col = 'skyblue2', add = T, border = 'skyblue2')
+plot(H_0305Lakes[which(H_0305Lakes$SHAPE_Area > 0.00001),], col = 'skyblue2', add = T, border = 'skyblue2')
+plot(H_0601Lakes[which(H_0601Lakes$SHAPE_Area > 0.00001),], col = 'skyblue2', add = T, border = 'skyblue2')
 
 # Plot sampling locations
-points(coors$Longitude, coors$Latitude, pch= 19, col= 'tomato')
+points(coors$Longitude, coors$Latitude, pch= 21, bg= 'tomato', col = 'black')
+
+# Add sampling labels
+text(-83.925, 34.93,"LNO")
+text(-83.638, 35,"LCT")
+text(-83.68, 34.8,"LBU")
+text(-83.445, 34.84,"LSE")
+text(-83.49680, 34.7,"LRA")
+text(-83.205, 34.761,"LTU")
+text(-83.24, 34.68,"LYO")
+text(-83.14807, 34.47,"LHA")
+text(-83.8, 34.26,"LLA")
+
+dev.off()
 
