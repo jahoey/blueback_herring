@@ -5,9 +5,11 @@ library(rgdal)
 # Read in metadata for landlocked and baseline BBH
 meta_land <- read.table("~/Documents/UCSC_postdoc/blueback_herring/data/landlocked_metadata.txt")
 # meta_base <- read.delim("~/Documents/UCSC_postdoc/blueback_herring/data/baseline_metadata.txt", header = TRUE)
-base_latlon <- read.delim("~/Documents/UCSC_postdoc/blueback_herring/maps/baseline_latlon.txt", header = TRUE)
+anadromous_latlon <- read.delim("~/Documents/UCSC_postdoc/blueback_herring/maps/anadromous_latlon.txt", header = TRUE) # Many anadromous populations from Reid et al 2018, but not all
 
 # Read in shapefiles with river and lake data
+us_rivers <- readOGR("~/Documents/UCSC_postdoc/blueback_herring/maps/ne_10m_rivers_lake_centerlines/ne_10m_rivers_lake_centerlines.shp")
+us_rivers_fine <- readOGR("~/Documents/UCSC_postdoc/blueback_herring/maps/ne_10m_rivers_north_america/ne_10m_rivers_north_america.shp")
 H_0602Lakes <- readOGR("~/Documents/UCSC_postdoc/blueback_herring/maps/H_0602_lakes/H_0602_lakes.shp")
 H_0306Lakes <- readOGR("~/Documents/UCSC_postdoc/blueback_herring/maps/H_0306_lakes/H_0306_lakes.shp")
 H_0313Lakes <- readOGR("~/Documents/UCSC_postdoc/blueback_herring/maps/H_0313_lakes/H_0313_lakes.shp")
@@ -34,7 +36,8 @@ par(
 
 map("worldHires", c("us", "canada"), xlim=c(-86,-60), ylim=c(28,48), col="gray92", fill=TRUE) #plots the region of the USA that I want
 map("state", xlim=c(-86,-60), ylim=c(28,48), add = TRUE, boundary=FALSE, col = 'gray70') # plots US state boundaries
-plot(riversData, col='skyblue2', add=T) # plot big rivers
+plot(us_rivers, col='skyblue2', add=T) # plot big rivers
+plot(us_rivers_fine, col='skyblue2', add=T)
 title(xlab = "Longitude (°)", ylab = "Latitude (°)")
 
 axis(1, at=seq(-85,-60, by=5), labels=seq(-85,-60, by= 5))
@@ -48,7 +51,9 @@ lines(c(-70.94437, -70), c(42.98110,42.9))
 lines(c(-70.92917, -70), c(42.75007,42.4))
 lines(c(-69.5, -70.12213), c(41.7, 41.68207))
 lines(c(-70.62445,-70.6),c(41.73676,40.8))
-points(base_latlon$Longitude, base_latlon$Latitude, col = 'black', pch = 21, bg = 'tomato')
+lines(c(-77.8, -76.8985), c(37.1,37.3727 ))
+lines(c(-78.1, -76.7903), c(37.55,37.5161 ))
+points(anadromous_latlon$Longitude, anadromous_latlon$Latitude, col = 'black', pch = 21, bg = 'tomato')
 points(coors$Longitude,coors$Latitude, col = 'black', pch = 21, bg = 'tomato')
 
 # Add labels
@@ -68,10 +73,17 @@ text(-73.2, 40.2,"MET", cex = 0.7)
 text(-75.7, 40.15,"DEL", cex = 0.7)
 text(-77, 39.7,"SUS", cex = 0.7)
 text(-78, 39,"POT", cex = 0.7)
-text(-78.3, 34.6,"CPF", cex = 0.7)
+text(-77.7, 38,"RAP", cex = 0.7)
+text(-78.8, 37.55,"YOR", cex = 0.7)
+text(-78.5, 37.1,"JAM", cex = 0.7)
+text(-77.3, 36.6,"CHO", cex = 0.7)
+text(-77.75, 36,"ROA", cex = 0.7)
+text(-78.2, 35.3,"NEU", cex = 0.7)
+text(-78.3, 34.6,"CF", cex = 0.7)
 text(-80, 33.7,"SAN", cex = 0.7)
-text(-81.5, 32.8,"SAV", cex = 0.7)
-text(-82.1, 30.1,"STJ", cex = 0.7)
+text(-81.5, 32.75,"SAV", cex = 0.7)
+text(-82.4, 31.5,"ALT", cex = 0.7)
+text(-82.1, 30.1,"STR", cex = 0.7)
 
 dev.off()
 
@@ -91,7 +103,7 @@ title(xlab = "Longitude (°)", ylab = "Latitude (°)")
 
 axis(1, at=seq(-85,-82, by=1), labels=seq(-85,-82, by= 1))
 axis(2, at=seq(33,36, by = 1), labels=seq(33,36, by= 1), las = TRUE)
-box()
+box(col = 'tomato')
 
 # Plot rivers and lakes
 plot(H_0602Lakes[which(H_0602Lakes$SHAPE_Area > 0.00001),], col = 'skyblue2', add = T, border = 'skyblue2')
