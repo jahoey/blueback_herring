@@ -10,8 +10,9 @@ library(viridis)
 # Reading in genepop file for 95 loci across 405 landlocked blueback herring
 bbh <- read.genepop("~/Documents/UCSC_postdoc/blueback_herring/data/BBH_genepop_LLMS_modifiedlandonly.gen")
 
-# Reading in genepop file for 190 loci across 1228 anadromous and landlocked blueback herring
-bbh_all <- read.genepop("~/Documents/UCSC_postdoc/blueback_herring/data/BBH_genepop_LLMS_modified.gen")
+# Reading in genepop file for 95 loci/190 alleles across 1228 anadromous and landlocked blueback herring (28 populations)
+# bbh_all <- read.genepop("~/Documents/UCSC_postdoc/blueback_herring/data/BBH_genepop_LLMS_modified.gen")
+bbh_all <- read.genepop("~/Documents/UCSC_postdoc/blueback_herring/data/BBH_land_origins_1970_95_genepop.gen") # additional anadromous populations
 
 # PCA
 sum(is.na(bbh$tab)) #1159
@@ -19,7 +20,7 @@ X <- scaleGen(bbh, NA.method = "mean") #landlocked only
 dim(X)
 class (X)
 
-sum(is.na(bbh_all$tab)) #3094
+sum(is.na(bbh_all$tab)) #3094; 4570
 Y <- scaleGen(bbh_all, NA.method = "mean") #landlocked and anadromous
 dim(Y)
 class (Y)
@@ -97,19 +98,19 @@ par(
   bty = 'n'
 )
 
-s.class(pca2$li, pop(bbh_all), xax=1,yax=2, col = plasma(28, alpha = 1), axesell=TRUE, cellipse=1.5, cstar=1,cpoint=1.75, grid=FALSE, addaxes = FALSE, xlim = c(-11,11), ylim = c(-15,14), clabel = 0)
+s.class(pca2$li, pop(bbh_all), xax=1,yax=2, col = plasma(35, alpha = 1), axesell=TRUE, cellipse=1.5, cstar=1,cpoint=1.75, grid=FALSE, addaxes = FALSE, xlim = c(-11,11), ylim = c(-15,14), clabel = 0)
 axis(1, at=seq(-10,10, by=5), labels=seq(-10,10, by= 5), line = -1)
 axis(2, at=seq(-10,10, by = 5), labels=seq(-10,10, by= 5), line = -3.5, las = 2)
-mtext("PC1 (9.38%)", side = 1, line = 1.5)
-mtext("PC2 (3.22%)", side = 2, line = -1)
+mtext("PC1 (7.33%)", side = 1, line = 1.5)
+mtext("PC2 (2.94%)", side = 2, line = -1)
 
-legend(9, 11,
-       legend=c("MAR", "PET", "EMA", "LOC","OYS", "EXE", "PAR", "MYS","HER", "MON", "GIL","DEL", "SUS", "POT","CPF","SAN", "SAV", "LLA", "LHA", "LCT", "LNO", "LSE", "LYO", "LTU", "LBU", "LRA", "STJ"),
+legend(10, 12,
+       legend=c("MAR", "PET", "EMA", "LOC","OYS", "EXE", "PAR", "MYS","HER", "MON", "GIL", "MET","DEL", "SUS", "POT", "RAP","YOR", "JAM", "CHO", "ROA", "NEU", "CF","SAN", "SAV", "ALT", "STR", "LLA", "LHA", "LCT", "LNO", "LSE", "LYO", "LTU", "LBU", "LRA"),
        pch=19,
-       col = plasma(28),
+       col = plasma(35),
        bty = "n",
        y.intersp = 0.7,
-       cex = 1)
+       cex = 0.85)
 
 dev.off()
 
@@ -127,16 +128,19 @@ par(
 )
 
 # Create vector with life history code: 1 = anadromous, 2 = landlocked
-life_hist <- rep(1,1228) # 1 = anadromous (823)
-life_hist[776:1180] <- 2 # 2 = landlocked (405)
+# life_hist <- rep(1,1228) # 1 = anadromous (823) for smaller bbh_all dataset
+# life_hist[776:1180] <- 2 # 2 = landlocked (405) for smaller bbh_all dataset
+
+life_hist <- rep(1,1970) # 1 = anadromous (1565)
+life_hist[1566:1970] <- 2 # 2 = landlocked (405)
 
 pop(bbh_all) <- life_hist
 
 s.class(pca2$li, pop(bbh_all), xax=1,yax=2, col = viridis(2, alpha = 0.5), axesell=TRUE, cellipse=1.5, cstar=1,cpoint=1.75, grid=FALSE, addaxes = FALSE, xlim = c(-11,11), ylim = c(-15,14), clabel = 0)
 axis(1, at=seq(-10,10, by=5), labels=seq(-10,10, by= 5), line = -1)
 axis(2, at=seq(-10,10, by = 5), labels=seq(-10,10, by= 5), line = -3.5, las = 2)
-mtext("PC1 (9.38%)", side = 1, line = 1.5)
-mtext("PC2 (3.22%)", side = 2, line = -1)
+mtext("PC1 (7.33%)", side = 1, line = 1.5)
+mtext("PC2 (2.94%)", side = 2, line = -1)
 legend(7, 10,
        legend=c("anadromous", "landlocked"),
        pch=19,
@@ -147,7 +151,7 @@ legend(7, 10,
 
 dev.off()
 
-# All landlocked and anadromous by region
+# All landlocked and anadromous by Reid et al 2018 regions 
 png(file="~/Documents/UCSC_postdoc/blueback_herring/results/pca_all_region.png", width=8, height=7, res=300, units="in")
 
 par(
@@ -161,27 +165,72 @@ par(
 )
 
 # Create vector with region code: 1 = NE, 2 = Mid-Atlantic, 3 = SE, 4 = landlocked
-region <- rep(1,1228) # 1 = canada (72)
-region[73:470] <- 2 # 2 = NE (398)
-region[471:640] <- 3 # 3 = Mid-Atlantic (170)
-region[c(641:775,1181:1228)] <- 4 # 4 = SE (183)
-region[776:1180] <- 5 # 5 = landlocked (405)
+region <- rep(1,1970) # 1 = canada-nne (165)
+region[166:312] <- 2 # 2 = MNE (147)
+region[313:491] <- 3 # 3 = SNE (179)
+region[492:1060] <- 4 # 4 = MAT (569)
+region[1061:1565] <- 5 # 5 = SAT (505)
+region[1566:1970] <- 6 # 6 = landlocked (405)
 
 pop(bbh_all) <- region
 
-s.class(pca2$li, pop(bbh_all), xax=1,yax=2, col = viridis(5, alpha = 0.5), axesell=TRUE, cellipse=1.5, cstar=1,cpoint=1.75, grid=FALSE, addaxes = FALSE, xlim = c(-11,11), ylim = c(-15,14), clabel = 0)
+s.class(pca2$li, pop(bbh_all), xax=1,yax=2, col = viridis(6, alpha = 0.5), axesell=TRUE, cellipse=1.5, cstar=1,cpoint=1.75, grid=FALSE, addaxes = FALSE, xlim = c(-11,11), ylim = c(-15,14), clabel = 0)
 axis(1, at=seq(-10,10, by=5), labels=seq(-10,10, by= 5), line = -1)
 axis(2, at=seq(-10,10, by = 5), labels=seq(-10,10, by= 5), line = -3.5, las = 2)
-mtext("PC1 (9.38%)", side = 1, line = 1.5)
-mtext("PC2 (3.22%)", side = 2, line = -1)
-legend(4, 11,
-       legend=c("anadromous - canada","anadromous - northeast","anadromous - mid atlantic", "anadromous - southeast", "landlocked"),
+mtext("PC1 (7.33%)", side = 1, line = 1.5)
+mtext("PC2 (2.94%)", side = 2, line = -1)
+legend(5, -5,
+       legend=c("anadromous - canada/nne","anadromous - mne","anadromous - sne", "anadromous - mat", "anadromous - sat", "landlocked"),
        pch=19,
-       col = viridis(5),
+       col = viridis(6),
+       bty = "n",
+       y.intersp = 0.8,
+       cex = 0.9)
+dev.off()
+
+# PCA for all landlocked and SE Atlantic anadromous populations
+# Subset the original genind object to landlocked and SE
+bbh_all_sub <- as.genind(bbh_all@tab[1061:1970,])
+pop(bbh_all_sub) <- pop(bbh_all)[1061:1970]
+
+# PCA
+sum(is.na(bbh_all_sub$tab)) #2122
+Z <- scaleGen(bbh_all_sub, NA.method = "mean") #landlocked and SE anadromous
+dim(Z)
+class (Z)
+
+pca3 <- dudi.pca(Z,cent=FALSE,scale=FALSE,scannf=FALSE,nf=3) #landlocked and SE anadromous
+barplot(pca3$eig[1:50],main="PCA eigenvalues", col=heat.colors(50))
+eig_percent <- round((pca3$eig/(sum(pca3$eig)))*100,2)
+eig_percent [1:3]
+
+png(file="~/Documents/UCSC_postdoc/blueback_herring/results/pca_land_and_se.png", width=8, height=7, res=300, units="in")
+
+par(
+  mar=c(4, 3, 3, 1), # panel magin size in "line number" units
+  mgp=c(3, 1, 0), # default is c(3,1,0); line number for axis label, tick label, axis
+  tcl=-0.5, # size of tick marks as distance INTO figure (negative means pointing outward)
+  cex=1, # character expansion factor; keep as 1; if you have a many-panel figure, they start changing the default!
+  ps=14, # point size, which is the font size
+  bg=NA,
+  bty = 'n'
+)
+
+s.class(pca3$li, pop(bbh_all_sub), xax=1,yax=2, col = viridis(14, alpha = 0.5), axesell=TRUE, cellipse=1.5, cstar=1,cpoint=1.75, grid=FALSE, addaxes = FALSE, xlim = c(-11,11), ylim = c(-15,14), clabel = 0)
+axis(1, at=seq(-10,10, by=5), labels=seq(-10,10, by= 5), line = -1)
+axis(2, at=seq(-10,10, by = 5), labels=seq(-10,10, by= 5), line = -3.5, las = 2)
+mtext("PC1 (6.20%)", side = 1, line = 1.5)
+mtext("PC2 (3.25%)", side = 2, line = -1)
+legend(10, 11,
+       legend=c("CF","SAN", "SAV", "ALT", "STR", "LLA", "LHA", "LCT", "LNO", "LSE", "LYO", "LTU", "LBU", "LRA"),
+       pch=19,
+       col = viridis(14),
        bty = "n",
        y.intersp = 1,
        cex = 1)
+
 dev.off()
+
 
 #### FST calculations with each population representing a unique population ####
 bbh_all_hier <- genind2hierfstat(bbh_all) # converts genind object into heirfstat object (each row is an individual, each column is a locus with cells denoting the alleles an individual has at each locus)
@@ -341,7 +390,7 @@ tiplabels(unique(bbh_all@pop), cex= 0.6, bg = 'white', frame = 'none')
 # tiplabels(unique(bbh_all@pop), cex= 0.6, bg = 'white', frame = 'none', adj = -0.1)
 
 # Two trees
-# Cirlce tree
+# Circular cladogram tree
 png(file="~/Documents/UCSC_postdoc/blueback_herring/results/bbh_all_tree_circle.png", width=8, height=7, res=300, units="in")
 
 par(
@@ -358,7 +407,7 @@ ggtree(tree, layout = 'circular', branch.length = 'none') + geom_treescale(x = 7
 
 dev.off()
 
-# Fan tree
+# Unrooted fan cladogram tree
 png(file="~/Documents/UCSC_postdoc/blueback_herring/results/bbh_all_tree_fan.png", width=8, height=7, res=300, units="in")
 
 par(
@@ -372,6 +421,23 @@ par(
 )
 
 ggtree(tree, layout = 'daylight', branch.length = 'none') + geom_treescale(x=2,y=-25) + geom_tiplab2(size = 3, hjust = -0.1, aes(angle=angle)) + ggplot2::xlim(2,26) + ggplot2::ylim(-25,0)
+
+dev.off()
+
+# Unrooted daylight
+png(file="~/Documents/UCSC_postdoc/blueback_herring/results/bbh_all_tree_unrooted_phylo_fan.png", width=8, height=7, res=300, units="in")
+
+par(
+  mar=c(4, 3, 3, 1), # panel magin size in "line number" units
+  mgp=c(3, 1, 0), # default is c(3,1,0); line number for axis label, tick label, axis
+  tcl=-0.5, # size of tick marks as distance INTO figure (negative means pointing outward)
+  cex=1, # character expansion factor; keep as 1; if you have a many-panel figure, they start changing the default!
+  ps=14, # point size, which is the font size
+  bg=NA,
+  bty = 'n'
+)
+
+ggtree(tree, layout = 'daylight') + geom_tiplab2(size = 2.5, hjust = -0.1, aes(angle=angle)) + ggplot2::xlim(-0.06,0.05) + ggplot2::ylim(-0.05,0.03) + geom_treescale(x=0.0,y=0.01, width = 0.01) + annotate("text", label = "0.01", x = 0.005, y = 0.013) 
 
 dev.off()
 
