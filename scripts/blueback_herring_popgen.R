@@ -4,6 +4,7 @@ library(hierfstat)
 library(poppr)
 library(ape)
 library(ggtree)
+library(ggplot2)
 library(viridis)
 
 #### Reading in data ####
@@ -375,9 +376,14 @@ temp <- as.data.frame(as.matrix(bbh_dist))
 table.paint(temp, cleg=0, clabel.row = 0.5, clabel.col = 0.5) #darker shades mean greater distances
 
 tree <- nj(bbh_dist) #unrooted
-tree$edge.length[27] <- abs(tree$edge.length[27]) # some branches are negative because of nj method, so options are to leave them, set them to zero, or take absolute value
-tree$edge.length[31] <- abs(tree$edge.length[31])
-tree$tip.label <- c('MAR', 'PET', 'EMA', 'LOC', 'OYS', 'EXE', 'PAR', 'MYS', 'HER', 'MON', 'GIL', 'MET', 'DEL', 'SUS', 'POT', 'CPF', 'SAN', 'SAV', 'LLA', 'LHA','LCT', 'LNO', 'LSE', 'LYO', 'LTU', 'LBU', 'LRA', 'STJ') # modify tip labels for easier plotting
+tree$edge.length[3] <- abs(tree$edge.length[3]) # some branches are negative because of nj method, so options are to leave them, set them to zero, or take absolute value; easier to read when plotted as regular looking tree
+tree$edge.length[21] <- abs(tree$edge.length[21])
+tree$edge.length[33] <- abs(tree$edge.length[33])
+tree$edge.length[35] <- abs(tree$edge.length[35])
+tree$edge.length[38] <- abs(tree$edge.length[38])
+tree$edge.length[39] <- abs(tree$edge.length[39])
+tree$edge.length[40] <- abs(tree$edge.length[40])
+tree$tip.label <- c("MAR", "PET", "EMA", "LOC","OYS", "EXE", "PAR", "MYS","HER", "MON", "GIL", "MET","DEL", "SUS", "POT", "RAP","YOR", "JAM", "CHO", "ROA", "NEU", "CF","SAN", "SAV", "ALT", "STR", "LLA", "LHA", "LCT", "LNO", "LSE", "LYO", "LTU", "LBU", "LRA")
 
 plot(tree, show.tip = FALSE, cex = 0.8)
 tiplabels(unique(bbh_all@pop), cex= 0.6, bg = 'white', frame = 'none', adj = -0.1)
@@ -408,10 +414,10 @@ ggtree(tree, layout = 'circular', branch.length = 'none') + geom_treescale(x = 7
 dev.off()
 
 # Unrooted fan cladogram tree
-png(file="~/Documents/UCSC_postdoc/blueback_herring/results/bbh_all_tree_fan.png", width=8, height=7, res=300, units="in")
+png(file="~/Documents/UCSC_postdoc/blueback_herring/results/bbh_all_tree_fan.png", width=7, height=6, res=300, units="in")
 
 par(
-  mar=c(4, 3, 3, 1), # panel magin size in "line number" units
+  mar=c(4, 3, 3, 1), # panel margin size in "line number" units
   mgp=c(3, 1, 0), # default is c(3,1,0); line number for axis label, tick label, axis
   tcl=-0.5, # size of tick marks as distance INTO figure (negative means pointing outward)
   cex=1, # character expansion factor; keep as 1; if you have a many-panel figure, they start changing the default!
@@ -420,7 +426,7 @@ par(
   bty = 'n'
 )
 
-ggtree(tree, layout = 'daylight', branch.length = 'none') + geom_treescale(x=2,y=-25) + geom_tiplab2(size = 3, hjust = -0.1, aes(angle=angle)) + ggplot2::xlim(2,26) + ggplot2::ylim(-25,0)
+ggtree(tree, layout = 'daylight', branch.length = 'none') + geom_treescale(x=17,y=0) + geom_tiplab2(size = 2.4, hjust = -0.15, aes(angle=angle)) + ggplot2::xlim(-18,25) + ggplot2::ylim(-20,15)
 
 dev.off()
 
@@ -437,7 +443,24 @@ par(
   bty = 'n'
 )
 
-ggtree(tree, layout = 'daylight') + geom_tiplab2(size = 2.5, hjust = -0.1, aes(angle=angle)) + ggplot2::xlim(-0.06,0.05) + ggplot2::ylim(-0.05,0.03) + geom_treescale(x=0.0,y=0.01, width = 0.01) + annotate("text", label = "0.01", x = 0.005, y = 0.013) 
+ggtree(tree, layout = 'daylight') + geom_tiplab2(size = 2.3, hjust = -0.15, aes(angle=angle)) + ggplot2::xlim(-0.05,0.05) + ggplot2::ylim(-0.01,0.08) + geom_treescale(x=0,y=0, width = 0.01) + annotate("text", label = "0.01", x = 0.005, y = 0.0025) 
+
+dev.off()
+
+# Unrooted tree
+png(file="~/Documents/UCSC_postdoc/blueback_herring/results/bbh_all_tree_unrooted_phylo.png", width=8, height=7, res=300, units="in")
+
+par(
+  mar=c(4, 3, 3, 1), # panel magin size in "line number" units
+  mgp=c(3, 1, 0), # default is c(3,1,0); line number for axis label, tick label, axis
+  tcl=-0.5, # size of tick marks as distance INTO figure (negative means pointing outward)
+  cex=1, # character expansion factor; keep as 1; if you have a many-panel figure, they start changing the default!
+  ps=14, # point size, which is the font size
+  bg=NA,
+  bty = 'n'
+)
+
+ggtree(tree) + geom_tiplab(size = 3, hjust = -0.15) + geom_treescale(x=0.05,y=0, width = 0.01)
 
 dev.off()
 
