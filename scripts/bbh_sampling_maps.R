@@ -75,6 +75,15 @@ lines(c(-71.5, -71.13810), c(43, 42.41530))
 lines(c(-71.6, -70.66420), c(42.3, 41.95425)) # TOW1
 lines(c(-71.6, -71.77), c(42.3, 42.58)) # TOW2
 lines(c(-71.08463, -72), c(41.89072, 42.2)) # NEM
+lines(c(-75.7, -76.27955), c(43, 42.85962)) # OSL
+lines(c(-77.28993, -78.1), c(42.79359, 42.4)) # CAL
+lines(c(-77.6, -76.92872), c(41.95,42.69501)) #SNL
+lines(c(-76, -76.73636), c(41.95,42.72954)) #CYL
+lines(c(-70.3,-69.27661), c(44.35,44.23834)) # STG
+lines(c(-67.2, -68.74302), c(42.4, 44.56971)) # ORL
+lines(c(-67.1,-68.42883), c(43.1,44.54369)) # UNI
+lines(c(-87,-87.85095), c(42.75,43.38235)) # LMI (left)
+lines(c(-87,-86.49678), c(42.75,43.94479)) # LMI (right)
 # Plot BBH lat/lon
 points(anadromous_latlon_only$Longitude, anadromous_latlon_only$Latitude, col = 'black', pch = 21, bg = 'cadetblue3') # BBH anadromous only
 points(coors$Longitude,coors$Latitude, col = 'black', pch = 21, bg = 'cadetblue3') # BBH landlocked
@@ -99,11 +108,23 @@ text(-74.85, 41.2, "HUD", cex =0.7)
 text(-74.2, 44.54, "LCH", cex = 0.7)
 text(-72.5, 42.7, "TOW", cex = 0.7)
 text(-72.7, 42.2, "NEM", cex = 0.7)
+text(-89.3, 47.45, "LSU", cex = 0.7)
+text(-78.6, 43.6, "LON", cex = 0.7)
+text(-75, 43, "OSL", cex = 0.7)
+text(-78.6, 42.4, "CAL", cex = 0.7)
+text(-77.6, 41.7, "SNL", cex = 0.7)
+text(-76, 41.7, "CYL", cex = 0.7)
+text(-70.95, 43.9, "AND", cex = 0.7)
+text(-71, 44.4, "STG", cex = 0.7)
+text(-66.5, 42.4, "ORL", cex = 0.7)
+text(-66.5, 43, "UNI", cex = 0.7)
+text(-87, 42.5, "LMI", cex = 0.7)
 
 text(-61.8, 46.8,"MAR", cex = 0.7)
 text(-65.5, 46.3,"PET", cex = 0.7)
 text(-66.9, 44.4,"EMA", cex = 0.7)
-text(-70.5, 44.5,"LOC", cex = 0.7)
+# text(-70.5, 44.5,"LOC", cex = 0.7) # BBH only map
+text(-69.9, 45,"LOC", cex = 0.7) # BBY and ALE map
 text(-69.3, 43.4,"OYS", cex = 0.7)
 text(-69.3, 42.9,"EXE", cex = 0.7)
 text(-69.3, 42.4,"PAR", cex = 0.7)
@@ -129,7 +150,7 @@ text(-82.1, 30.1,"STR", cex = 0.7)
 
 dev.off()
 
-#### Inset map ####
+#### Inset map for southern reservoirs ####
 png(file="~/Documents/UCSC_postdoc/blueback_herring/maps/landlocked.png", width=7, height=5, res=300, units="in")
 
 par(
@@ -169,6 +190,39 @@ text(-83.205, 34.761,"LTU")
 text(-83.24, 34.68,"LYO")
 text(-83.14807, 34.47,"LHA")
 text(-83.8, 34.26,"LLA")
+
+dev.off()
+
+#### Inset map for Long Island Sound ####
+png(file="~/Documents/UCSC_postdoc/blueback_herring/maps/li_sound.png", width=7, height=5, res=300, units="in")
+
+par(
+  mar=c(5, 7, 4, 2), # panel margin size in "line number" units
+  mgp=c(3, 1, 0), # default is c(3,1,0); line number for axis label, tick label, axis
+  tcl=-0.5, # size of tick marks as distance INTO figure (negative means pointing outward)
+  cex=1, # character expansion factor; keep as 1; if you have a many-panel figure, they start changing the default!
+  ps=14 # point size, which is the font size
+)
+map("worldHires", c("us"), xlim=c(-72.9,-71.8), ylim=c(40.6,41.7), col="gray92", fill=TRUE) #plots the region of the USA that I want
+map("state", xlim=c(-72.9,-71.8), ylim=c(40.6,41.7), add = TRUE, boundary=FALSE, col = 'gray70') # plots US state boundaries
+title(xlab = "Longitude (°)", ylab = "Latitude (°)")
+
+axis(1, at=seq(-72.9,-71.8, by=1), labels=seq(-72.9,-71.8, by= 1))
+axis(2, at=seq(40.6,41.7, by = 1), labels=seq(40.6,41.7, by= 1), las = TRUE)
+box(col = 'black')
+
+# Plot rivers and lakes
+
+# Plot sampling locations
+points(ale_base_latlon_only$Longitude, ale_base_latlon_only$Latitude, col = 'black', pch = 21, bg = 'tomato') # ALE anadromous only
+points(ale_land_latlon$Longitude, ale_land_latlon$Latitude, col = 'black', pch = 21, bg = 'tomato') # ALE landlocked
+
+# Add sampling labels
+text(-72.7, 41.45,"QUO")
+text(-72.78, 40.9,"PEC")
+text(-72.4, 41.41,"ROG")
+text(-72.15, 41.43,"PAT")
+text(-72.17, 41.27,"BRI")
 
 dev.off()
 
