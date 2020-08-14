@@ -50,7 +50,7 @@ par(
 map("worldHires", c("us", "canada"), xlim=c(-90,-60), ylim=c(28,48), col="gray92", fill=TRUE) #plots the region of the USA that I want
 map("state", xlim=c(-90,-60), ylim=c(28,48), add = TRUE, boundary=FALSE, col = 'gray70') # plots US state boundaries
 plot(us_rivers, col='skyblue2', add=T) # plot big rivers
-plot(us_rivers_fine, col='skyblue2', add=T)
+# plot(us_rivers_fine, col='skyblue2', add=T)
 title(xlab = "Longitude (°)", ylab = "Latitude (°)")
 
 axis(1, at=seq(-90,-60, by=5), labels=seq(-90,-60, by= 5))
@@ -221,7 +221,7 @@ points(ale_land_latlon$Longitude, ale_land_latlon$Latitude, col = 'black', pch =
 text(-72.7, 41.45,"QUO")
 text(-72.78, 40.9,"PEC")
 text(-72.4, 41.41,"ROG")
-text(-72.15, 41.43,"PAT")
+text(-72.15, 41.43,"PAL") # Pattagansett Lake
 text(-72.17, 41.27,"BRI")
 
 dev.off()
