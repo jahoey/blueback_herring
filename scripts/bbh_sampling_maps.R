@@ -148,6 +148,9 @@ text(-81.5, 32.75,"SAV", cex = 0.7)
 text(-82.4, 31.5,"ALT", cex = 0.7)
 text(-82.1, 30.1,"STR", cex = 0.7)
 
+# legend
+legend("bottomright", c('Alewife', 'Both alewife & blueback herring', 'Blueback herring'), pch = c(21, 21, 21), pt.bg = c('tomato', 'slateblue2', 'cadetblue3'), cex = 0.8)
+
 dev.off()
 
 #### Inset map for southern reservoirs ####
