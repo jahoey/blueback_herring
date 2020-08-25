@@ -1,3 +1,1 @@
-# blueback_herring
-
-### Data, code and figures for investigating the origins of landlocked blueback herring in southern reservoirs
+### Data, code and figures for investigating the origins of landlocked alewife and blueback herring
