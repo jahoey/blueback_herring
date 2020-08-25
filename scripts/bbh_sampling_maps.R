@@ -1,6 +1,7 @@
 library(maps)
 library(mapdata)
 library(rgdal)
+library(viridis)
 
 #### Read in data ####
 # Read in metadata for landlocked and baseline BBH
@@ -11,6 +12,10 @@ anadromous_latlon <- read.delim("~/Documents/UCSC_postdoc/blueback_herring/maps/
 # Read in metadata for landlocked and baseline ALE
 ale_base_latlon <- read.delim("~/Documents/UCSC_postdoc/alewife/data/ALE_anadromous_latlon.txt", header = TRUE, fileEncoding="latin1")
 ale_land_latlon <- read.delim("~/Documents/UCSC_postdoc/alewife/data/ALE_landlocked_latlon.txt", header = TRUE)
+
+ale_all <- merge(ale_base_latlon, ale_land_latlon, by.x = c('Location', 'Latitude', 'Longitude', 'Samples', 'X..polymorphic'), by.y = c('Code','Latitude', 'Longitude', 'Samples', 'X..polymorphic'), all = TRUE)
+ale_all2 <- ale_all[-18,] # remove one of the Lake Michigans to make sorting easier
+ale_all_ordered <- ale_all2[order(match(ale_all2$Location,unique(pop(ale)))),] # order based on PCA order
 
 # Which sites are shared by BBH and ALE?
 both <- intersect(ale_base_latlon$Location, anadromous_latlon$Code)
@@ -58,8 +63,8 @@ axis(2, at=seq(28,48, by = 5), labels=seq(28,48, by= 5), las = TRUE)
 box()
 
 # Plot BBH sampling locations
-rect(-84.5,34,-82.5,35.1, border = 'black', lwd = 1.5) # box around inset
-rect(-73,40.7,-71.9,41.6, border = 'black', lwd = 1.5) # box around inset
+rect(-84.5,34,-82.5,35.1, border = 'black', lwd = 1.5, lty = 2) # box around inset
+rect(-73,40.7,-71.9,41.6, border = 'black', lwd = 1.5, lty = 2) # box around inset
 lines(c(-70.91866, -70), c(43.13086,43.3)) # lines first so the points are plotted on top
 lines(c(-70.94437, -70), c(42.98110,42.9))
 lines(c(-70.92917, -70), c(42.75007,42.4))
@@ -84,6 +89,8 @@ lines(c(-67.2, -68.74302), c(42.4, 44.56971)) # ORL
 lines(c(-67.1,-68.42883), c(43.1,44.54369)) # UNI
 lines(c(-87,-87.85095), c(42.75,43.38235)) # LMI (left)
 lines(c(-87,-86.49678), c(42.75,43.94479)) # LMI (right)
+
+#### Plot all BBH and ALE populations ####
 # Plot BBH lat/lon
 points(anadromous_latlon_only$Longitude, anadromous_latlon_only$Latitude, col = 'black', pch = 21, bg = 'cadetblue3') # BBH anadromous only
 points(coors$Longitude,coors$Latitude, col = 'black', pch = 21, bg = 'cadetblue3') # BBH landlocked
@@ -93,6 +100,11 @@ points(ale_land_latlon$Longitude, ale_land_latlon$Latitude, col = 'black', pch =
 # Both
 points(both_only$Longitude, both_only$Latitude, col = 'black', pch = 21, bg = 'slateblue2')
 
+#### Plot ALE locations using colors that match PCA ####
+points(ale_all_ordered$Longitude, ale_all_ordered$Latitude, bg = viridis(43), pch = 21, col = 'black')
+points(ale_all[18,'Longitude'], ale_all[18,'Latitude'], bg = "#AFDD2FFF", pch = 21, col = 'black') # plot other LMI point
+
+#### Identify points ####
 # Add labels
 text(-65,40, expression(italic("Atlantic Ocean")), cex = 0.8)
 text(-66.0, 47.35, "MIR", cex = 0.7)
@@ -169,7 +181,7 @@ title(xlab = "Longitude (°)", ylab = "Latitude (°)")
 
 axis(1, at=seq(-85,-82, by=1), labels=seq(-85,-82, by= 1))
 axis(2, at=seq(33,36, by = 1), labels=seq(33,36, by= 1), las = TRUE)
-box(col = 'tomato')
+box(col = 'black')
 
 # Plot rivers and lakes
 plot(H_0602Lakes[which(H_0602Lakes$SHAPE_Area > 0.00001),], col = 'skyblue2', add = T, border = 'skyblue2')
@@ -181,7 +193,7 @@ plot(H_0305Lakes[which(H_0305Lakes$SHAPE_Area > 0.00001),], col = 'skyblue2', ad
 plot(H_0601Lakes[which(H_0601Lakes$SHAPE_Area > 0.00001),], col = 'skyblue2', add = T, border = 'skyblue2')
 
 # Plot sampling locations
-points(coors$Longitude, coors$Latitude, pch= 21, bg= 'tomato', col = 'black')
+points(coors$Longitude, coors$Latitude, col = 'black', pch = 21, bg = 'cadetblue3')
 
 # Add sampling labels
 text(-83.925, 34.93,"LNO")
@@ -209,6 +221,7 @@ par(
 map("worldHires", c("us"), xlim=c(-72.9,-71.8), ylim=c(40.6,41.7), col="gray92", fill=TRUE) #plots the region of the USA that I want
 map("state", xlim=c(-72.9,-71.8), ylim=c(40.6,41.7), add = TRUE, boundary=FALSE, col = 'gray70') # plots US state boundaries
 title(xlab = "Longitude (°)", ylab = "Latitude (°)")
+plot(us_rivers, col='skyblue2', add=T) # plot big rivers
 
 axis(1, at=seq(-72.9,-71.8, by=1), labels=seq(-72.9,-71.8, by= 1))
 axis(2, at=seq(40.6,41.7, by = 1), labels=seq(40.6,41.7, by= 1), las = TRUE)
