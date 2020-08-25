@@ -6,14 +6,16 @@ library(ape)
 library(ggtree)
 library(ggplot2)
 library(viridis)
+library(readxl)
+library(phangorn)
 
 #### Reading in data ####
 # Reading in genepop file for 95 loci across 405 landlocked blueback herring
-bbh <- read.genepop("~/Documents/UCSC_postdoc/blueback_herring/data/BBH_genepop_LLMS_modifiedlandonly.gen")
+bbh <- read.genepop("~/Documents/UCSC_postdoc/river_herring/data/blueback_herring/BBH_genepop_LLMS_modifiedlandonly.gen")
 
 # Reading in genepop file for 95 loci/190 alleles across 1228 anadromous and landlocked blueback herring (28 populations)
-# bbh_all <- read.genepop("~/Documents/UCSC_postdoc/blueback_herring/data/BBH_genepop_LLMS_modified.gen")
-bbh_all <- read.genepop("~/Documents/UCSC_postdoc/blueback_herring/data/BBH_land_origins_1970_95_genepop.gen") # additional anadromous populations
+# bbh_all <- read.genepop("~/Documents/UCSC_postdoc/river_herring/data/blueback_herring/BBH_genepop_LLMS_modified.gen")
+bbh_all <- read.genepop("~/Documents/UCSC_postdoc/river_herring/data/blueback_herring/BBH_land_origins_1970_95_genepop.gen") # additional anadromous populations
 
 # PCA
 sum(is.na(bbh$tab)) #1159
@@ -56,7 +58,7 @@ add.scatter.eig(pca2$eig[1:20], 3,1,2)
 
 ### To make a nice plot of the PCA broken down by population ###
 # Landlocked only by population
-png(file="~/Documents/UCSC_postdoc/blueback_herring/results/pca_landlocked_pops.png", width=8, height=7, res=300, units="in")
+png(file="~/Documents/UCSC_postdoc/river_herring/results/blueback_herring/pca_landlocked_pops.png", width=8, height=7, res=300, units="in")
 
 par(
   mar=c(4, 3, 3, 1), # panel margin size in "line number" units
@@ -87,7 +89,7 @@ legend(7, 10,
 dev.off()
 
 # All landlocked and anadromous by population
-png(file="~/Documents/UCSC_postdoc/blueback_herring/results/pca_all_pops.png", width=8, height=7, res=300, units="in")
+png(file="~/Documents/UCSC_postdoc/river_herring/results/blueback_herring/pca_all_pops.png", width=8, height=7, res=300, units="in")
 
 par(
   mar=c(4, 3, 3, 1), # panel magin size in "line number" units
@@ -105,6 +107,10 @@ axis(2, at=seq(-10,10, by = 5), labels=seq(-10,10, by= 5), line = -3.5, las = 2)
 mtext("PC1 (7.33%)", side = 1, line = 1.5)
 mtext("PC2 (2.94%)", side = 2, line = -1)
 
+points(pca2$li[1566:1739,1], pca2$li[1566:1739,2], col = 'turquoise')# LLA, LHA, LCT, LNO
+points(pca2$li[1329:1423,1], pca2$li[1329:1423,2], col = 'blue') #SAV
+points(pca2$li[1471:1565,1], pca2$li[1471:1565,2], col = 'green')# St Johns River (STJ)
+
 legend(10, 12,
        legend=c("MAR", "PET", "EMA", "LOC","OYS", "EXE", "PAR", "MYS","HER", "MON", "GIL", "MET","DEL", "SUS", "POT", "RAP","YOR", "JAM", "CHO", "ROA", "NEU", "CF","SAN", "SAV", "ALT", "STR", "LLA", "LHA", "LCT", "LNO", "LSE", "LYO", "LTU", "LBU", "LRA"),
        pch=19,
@@ -116,7 +122,7 @@ legend(10, 12,
 dev.off()
 
 # All landlocked and anadromous by life history
-png(file="~/Documents/UCSC_postdoc/blueback_herring/results/pca_all_life_hist.png", width=8, height=7, res=300, units="in")
+png(file="~/Documents/UCSC_postdoc/river_herring/results/blueback_herring/pca_all_life_hist.png", width=8, height=7, res=300, units="in")
 
 par(
   mar=c(4, 3, 3, 1), # panel magin size in "line number" units
@@ -153,7 +159,7 @@ legend(7, 10,
 dev.off()
 
 # All landlocked and anadromous by Reid et al 2018 regions 
-png(file="~/Documents/UCSC_postdoc/blueback_herring/results/pca_all_region.png", width=8, height=7, res=300, units="in")
+png(file="~/Documents/UCSC_postdoc/river_herring/results/blueback_herring/pca_all_region.png", width=8, height=7, res=300, units="in")
 
 par(
   mar=c(4, 3, 3, 1), # panel magin size in "line number" units
@@ -205,7 +211,7 @@ barplot(pca3$eig[1:50],main="PCA eigenvalues", col=heat.colors(50))
 eig_percent <- round((pca3$eig/(sum(pca3$eig)))*100,2)
 eig_percent [1:3]
 
-png(file="~/Documents/UCSC_postdoc/blueback_herring/results/pca_land_and_se.png", width=8, height=7, res=300, units="in")
+png(file="~/Documents/UCSC_postdoc/river_herring/results/blueback_herring/pca_land_and_se.png", width=8, height=7, res=300, units="in")
 
 par(
   mar=c(4, 3, 3, 1), # panel magin size in "line number" units
@@ -225,10 +231,13 @@ mtext("PC2 (3.25%)", side = 2, line = -1)
 legend(10, 11,
        legend=c("CF","SAN", "SAV", "ALT", "STR", "LLA", "LHA", "LCT", "LNO", "LSE", "LYO", "LTU", "LBU", "LRA"),
        pch=19,
-       col = viridis(14),
+       col = viridis(14, alpha = 0.5),
        bty = "n",
        y.intersp = 1,
        cex = 1)
+
+points(pca3$li[269:363,1], pca3$li[269:363,2], col = 'tomato') #SAV
+points(pca3$li[411:505,1], pca3$li[411:505,2], col = 'green')# St Johns River (STJ)
 
 dev.off()
 
@@ -238,7 +247,7 @@ bbh_all_hier <- genind2hierfstat(bbh_all) # converts genind object into heirfsta
 pairwise.WCfst(bbh_all_hier,diploid=TRUE) # calculates W-C Fst
 fst <- genet.dist(bbh_all_hier, method = 'WC84')
 
-write.table(as.matrix(round(fst, 4)), '~/Documents/UCSC_postdoc/blueback_herring/results/fst_table.txt')
+write.table(as.matrix(round(fst, 4)), '~/Documents/UCSC_postdoc/river_herring/results/blueback_herring/fst_table.txt')
 
 #### Basic popgen stats ####
 # Find columns that have zero variance (all the same values = monomorphic in this sense)
@@ -391,13 +400,19 @@ plot(tree,type='unrooted',show.tip=FALSE)
 title('Unrooted NJ tree')
 tiplabels(unique(bbh_all@pop), cex= 0.6, bg = 'white', frame = 'none')
 
+x <- as.vector(bbh_dist)
+y <- as.vector(as.dist(cophenetic(tree)))
+plot(x, y, xlab="original pairwise distances", ylab="pairwise distances on the tree", main="Is NJ appropriate?", pch=20, col=transp("black",.1), cex=3)
+abline(lm(y~x), col="red")
+cor(x,y)^2
+
 # tree.root <- root(tree, out = 1) #rooted, but what is the root?
 # plot(tree.root, show.tip = FALSE, cex = 0.8)
 # tiplabels(unique(bbh_all@pop), cex= 0.6, bg = 'white', frame = 'none', adj = -0.1)
 
 # Two trees
 # Circular cladogram tree
-png(file="~/Documents/UCSC_postdoc/blueback_herring/results/bbh_all_tree_circle.png", width=8, height=7, res=300, units="in")
+png(file="~/Documents/UCSC_postdoc/river_herring/results/blueback_herring/bbh_all_tree_circle.png", width=8, height=7, res=300, units="in")
 
 par(
   mar=c(4, 3, 3, 1), # panel magin size in "line number" units
@@ -414,7 +429,7 @@ ggtree(tree, layout = 'circular', branch.length = 'none') + geom_treescale(x = 7
 dev.off()
 
 # Unrooted fan cladogram tree
-png(file="~/Documents/UCSC_postdoc/blueback_herring/results/bbh_all_tree_fan.png", width=7, height=6, res=300, units="in")
+png(file="~/Documents/UCSC_postdoc/river_herring/results/blueback_herring/bbh_all_tree_fan.png", width=7, height=6, res=300, units="in")
 
 par(
   mar=c(4, 3, 3, 1), # panel margin size in "line number" units
@@ -431,7 +446,7 @@ ggtree(tree, layout = 'daylight', branch.length = 'none') + geom_treescale(x=17,
 dev.off()
 
 # Unrooted daylight
-png(file="~/Documents/UCSC_postdoc/blueback_herring/results/bbh_all_tree_unrooted_phylo_fan.png", width=8, height=7, res=300, units="in")
+png(file="~/Documents/UCSC_postdoc/river_herring/results/blueback_herring/bbh_all_tree_unrooted_phylo_fan.png", width=8, height=7, res=300, units="in")
 
 par(
   mar=c(4, 3, 3, 1), # panel magin size in "line number" units
@@ -448,7 +463,7 @@ ggtree(tree, layout = 'daylight') + geom_tiplab2(size = 2.3, hjust = -0.15, aes(
 dev.off()
 
 # Unrooted tree
-png(file="~/Documents/UCSC_postdoc/blueback_herring/results/bbh_all_tree_unrooted_phylo.png", width=8, height=7, res=300, units="in")
+png(file="~/Documents/UCSC_postdoc/river_herring/results/blueback_herring/bbh_all_tree_unrooted_phylo.png", width=8, height=7, res=300, units="in")
 
 par(
   mar=c(4, 3, 3, 1), # panel magin size in "line number" units
@@ -464,11 +479,37 @@ ggtree(tree) + geom_tiplab(size = 3, hjust = -0.15) + geom_treescale(x=0.05,y=0,
 
 dev.off()
 
+#### DAPC ####
+bbh_all
+grp <- find.clusters(bbh_all, max.n.clust = 4)
+
+dapc1 <- dapc(bbh_all, grp = grp)
+scatter.dapc(dapc1)
+
 #### Exploring how genetic diversity scales with dam age and size ####
-data <- read.table("~/Documents/UCSC_postdoc/blueback_herring/results/bbh_all_%poly.txt", header = TRUE)
+# Read in heterozygosity info for all dams
+He <- as.data.frame(read_excel("~/Documents/UCSC_postdoc/river_herring/data/blueback_herring/BBH_land_origins_1970_95_Toolkit.xlsx", sheet = "Stats"))
+colnames(He) <- He[1,]
+He <- He[-1,]
 
-plot(data$Dam_year,data$X._polymorphic)
-plot(data$Dam_year,data$H_exp)
+# Read in dam info
+dams <- read.delim("~/Documents/UCSC_postdoc/river_herring/results/blueback_herring/bbh_all_%poly.txt", header = TRUE)
 
-plot(data$Dam_size,data$X._polymorphic)
-plot(data$Dam_size,data$H_exp)
+# Merge heterozygosity and dam data
+data <- merge(He, dams, by.x = "Population", by.y = "Population", all.x = TRUE)
+
+hist(as.numeric(He$`Obs Hz`))
+
+plot(data$Dam_year, data$`Obs Hz`)
+abline(lm)
+plot(data$Dam_size, data$`Obs Hz`)
+abline(lm2)
+
+lm <- lm(data$`Obs Hz` ~ data$Dam_year)
+summary(lm)
+
+lm2 <- lm(data$`Obs Hz` ~ data$Dam_size)
+summary(lm2)
+
+plot(lm)
+
