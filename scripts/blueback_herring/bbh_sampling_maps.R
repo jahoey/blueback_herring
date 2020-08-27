@@ -92,13 +92,13 @@ lines(c(-87,-86.49678), c(42.75,43.94479)) # LMI (right)
 
 #### Plot all BBH and ALE populations ####
 # Plot BBH lat/lon
-points(anadromous_latlon_only$Longitude, anadromous_latlon_only$Latitude, col = 'black', pch = 21, bg = 'cadetblue3') # BBH anadromous only
+points(anadromous_latlon_only$Longitude, anadromous_latlon_only$Latitude, col = 'black', pch = 24, bg = 'cadetblue3') # BBH anadromous only
 points(coors$Longitude,coors$Latitude, col = 'black', pch = 21, bg = 'cadetblue3') # BBH landlocked
 # Plot ALE lat/lon
-points(ale_base_latlon_only$Longitude, ale_base_latlon_only$Latitude, col = 'black', pch = 21, bg = 'tomato') # ALE anadromous only
+points(ale_base_latlon_only$Longitude, ale_base_latlon_only$Latitude, col = 'black', pch = 24, bg = 'tomato') # ALE anadromous only
 points(ale_land_latlon$Longitude, ale_land_latlon$Latitude, col = 'black', pch = 21, bg = 'tomato') # ALE landlocked
 # Both
-points(both_only$Longitude, both_only$Latitude, col = 'black', pch = 21, bg = 'slateblue2')
+points(both_only$Longitude, both_only$Latitude, col = 'black', pch = 24, bg = 'slateblue2') # both species, anadromous
 
 #### Plot ALE locations using colors that match PCA ####
 points(ale_all_ordered$Longitude, ale_all_ordered$Latitude, bg = viridis(43), pch = 21, col = 'black')
@@ -161,7 +161,9 @@ text(-82.4, 31.5,"ALT", cex = 0.7)
 text(-82.1, 30.1,"STR", cex = 0.7)
 
 # legend
-legend("bottomright", c('Alewife', 'Both alewife & blueback herring', 'Blueback herring'), pch = c(21, 21, 21), pt.bg = c('tomato', 'slateblue2', 'cadetblue3'), cex = 0.8)
+legend("bottomright", c('Alewife', 'Both alewife & blueback herring', 'Blueback herring'), pch = c(15, 15, 15), col = c('tomato', 'slateblue2', 'cadetblue3'), cex = 0.8)
+box()
+legend(-64.95,31.7, c('Anadromous', 'Landlocked'), pch = c(2,1), cex = 0.8)
 
 dev.off()
 
@@ -228,9 +230,10 @@ axis(2, at=seq(40.6,41.7, by = 1), labels=seq(40.6,41.7, by= 1), las = TRUE)
 box(col = 'black')
 
 # Plot rivers and lakes
+plot(us_rivers, col='skyblue2', add=T) # plot big rivers
 
 # Plot sampling locations
-points(ale_base_latlon_only$Longitude, ale_base_latlon_only$Latitude, col = 'black', pch = 21, bg = 'tomato') # ALE anadromous only
+points(ale_base_latlon_only$Longitude, ale_base_latlon_only$Latitude, col = 'black', pch = 24, bg = 'tomato') # ALE anadromous only
 points(ale_land_latlon$Longitude, ale_land_latlon$Latitude, col = 'black', pch = 21, bg = 'tomato') # ALE landlocked
 
 # Add sampling labels
