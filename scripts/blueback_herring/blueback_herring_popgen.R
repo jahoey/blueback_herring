@@ -195,6 +195,56 @@ legend(5, -5,
        cex = 0.9)
 dev.off()
 
+# All landlocked and anadromous by Reid et al 2018 regions with separate colors for landlocked pops
+png(file="~/Documents/UCSC_postdoc/river_herring/results/blueback_herring/pca_regionalAND_uniqLAND.png", width=8, height=7, res=300, units="in")
+
+par(
+  mar=c(3, 3, 3, 1), # panel magin size in "line number" units
+  mgp=c(3, 1, 0), # default is c(3,1,0); line number for axis label, tick label, axis
+  tcl=-0.5, # size of tick marks as distance INTO figure (negative means pointing outward)
+  cex=1, # character expansion factor; keep as 1; if you have a many-panel figure, they start changing the default!
+  ps=14, # point size, which is the font size
+  bg=NA,
+  bty = 'n'
+)
+
+# Create vector with region code: 1 = NE, 2 = MNE, 3 = SNE, 4 = MAT, 5 = SAT
+groups <- as.vector(pop(bbh_all))
+
+groups[1:165] <- 1 # 1 = canada-nne (165)
+groups[166:312] <- 2 # 2 = MNE (147)
+groups[313:491] <- 3 # 3 = SNE (179)
+groups[492:1060] <- 4 # 4 = MAT (569)
+groups[1061:1565] <- 5 # 5 = SAT (505)
+
+pop(bbh_all) <- groups
+
+s.class(pca2$li[1:1565,], pop(bbh_all)[1:1565], xax=1,yax=2, col = viridis(14, alpha = 0.6), axesell=TRUE, cellipse=1.5, cstar=1,cpoint=1.2, grid=FALSE, addaxes = FALSE, xlim = c(-12,15), ylim = c(-12,12), clabel = 0, pch = 17)
+s.class(pca2$li[1566:1970,], pop(bbh_all)[1566:1970], xax=1,yax=2, col = viridis(14, alpha = 0.6), add.plot = TRUE, clabel = 0, cpoint=1.75)
+
+axis(1, at=seq(-8,8, by=4), labels=seq(-8,8, by= 4), line = -1)
+axis(2, at=seq(-8,8, by = 4), labels=seq(-8,8, by= 4), line = -1, las = 2)
+mtext("PC1 (7.33%)", side = 1, line = 1.5)
+mtext("PC2 (2.94%)", side = 2, line = 1.5)
+legend(10, 8,
+       legend=c("CAN-NNE","MNE","SNE", "MAT", "SAT"),
+       pch=17,
+       title = 'Anadromous',
+       col = viridis(14, alpha = 0.8)[1:5],
+       bty = "n",
+       y.intersp = 0.8,
+       cex = 0.9)
+legend(9.2, 4,
+       legend=c("LLA", "LHA", "LCT", "LNO", "LSE", "LYO", "LTU", "LBU", "LRA"),
+       pch=19,
+       title = '     Landlocked',
+       col = viridis(14, alpha = 0.8)[6:14],
+       bty = "n",
+       y.intersp = 0.8,
+       cex = 0.9)
+
+dev.off()
+
 # PCA for all landlocked and SE Atlantic anadromous populations
 # Subset the original genind object to landlocked and SE
 bbh_all_sub <- as.genind(bbh_all@tab[1061:1970,])
@@ -248,6 +298,17 @@ pairwise.WCfst(bbh_all_hier,diploid=TRUE) # calculates W-C Fst
 fst <- genet.dist(bbh_all_hier, method = 'WC84')
 
 write.table(as.matrix(round(fst, 4)), '~/Documents/UCSC_postdoc/river_herring/results/blueback_herring/fst_table.txt')
+
+# Mean FST of all populations, of landlocked and of anadromous
+mean_fst <- read.table('~/Documents/UCSC_postdoc/river_herring/results/blueback_herring/fst_table.txt')
+mean_fst[upper.tri(mean_fst)] <- NA
+mean(data.matrix(mean_fst), na.rm = TRUE)
+
+land <- mean_fst[27:35,27:35]
+mean(data.matrix(land), na.rm = TRUE)
+
+anad <- mean_fst[1:26,1:26]
+mean(data.matrix(anad), na.rm = TRUE)
 
 #### Basic popgen stats ####
 # Find columns that have zero variance (all the same values = monomorphic in this sense)
